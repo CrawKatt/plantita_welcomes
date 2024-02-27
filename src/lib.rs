@@ -34,7 +34,7 @@ pub mod image_combiner {
         DynamicImage::ImageRgba8(round_avatar)
     }
 
-    pub fn combine_images(background_path: &str, avatar_path: &str, x: u32, y: u32, target_size: u32) -> Result<DynamicImage, ImageError> {
+    pub fn combine_images(background_path: &str, avatar_path: &str, x: u32, y: u32, target_size: u32, output_path: &str) -> Result<DynamicImage, ImageError> {
         let mut background = image::open(background_path)?;
         let avatar = image::open(avatar_path)?;
         let round_avatar = create_round_avatar(avatar, target_size).to_rgba8();
@@ -75,6 +75,8 @@ pub mod image_combiner {
         }
 
         let background_result = DynamicImage::ImageRgba8(background.into());
+
+        background_result.save(output_path)?;
 
         Ok(background_result)
     }
