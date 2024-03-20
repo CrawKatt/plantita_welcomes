@@ -15,10 +15,10 @@ pub mod generate_phrase {
         avatar_img = image::imageops::resize(&avatar_img, 150, 150, image::imageops::FilterType::Nearest);
     
         // Crea una nueva imagen con un tamaño específico y fondo negro
-        let mut img: ImageBuffer<Rgba<u8>, _> = ImageBuffer::from_pixel(800, 300, Rgba([0u8, 0u8, 0u8, 255u8]));
+        let mut img: ImageBuffer<Rgba<u8>, _> = ImageBuffer::from_pixel(700, 182, Rgba([0u8, 0u8, 0u8, 255u8]));
     
         // Dibuja el avatar en la imagen en la posición deseada (un poco más a la derecha y cerca del centro)
-        let avatar_x = 150; // 50 pixels to the right
+        let avatar_x = 100; // 100 pixels to the right
         let avatar_y = (img.height() / 2) - (avatar_img.height() / 2);
         image::imageops::overlay(&mut img, &avatar_img, avatar_x, i64::from(avatar_y));
     
@@ -85,7 +85,7 @@ pub mod generate_phrase {
         draw_text_mut(&mut img, Rgba([255u8, 255u8, 255u8, 255u8]), text_x, current_height, scale, &italic_font, &line);
     
         // Dibuja el nombre del autor en la imagen en una posición independiente del contenido del mensaje
-        let name_y = img.height() - 100; // 100 pixels from the bottom edge
+        let name_y = img.height() - 50; // 100 pixels from the bottom edge
         let name_y = name_y.try_into().unwrap_or(i32::MAX); // SAFETY: Si el valor es mayor a i32, se asigna el valor máximo de i32
     
         let name_x = img.width() - 300; // 300 pixels from the right edge
