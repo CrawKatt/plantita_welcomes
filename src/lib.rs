@@ -154,12 +154,12 @@ pub mod generate_phrase {
 #[cfg(feature = "create_welcome")]
 pub mod create_welcome {
     use image::imageops::{overlay, resize};
-    use image::{
-        imageops, DynamicImage, GenericImage, GenericImageView, ImageBuffer, ImageError, Pixel,
-        Rgba,
-    };
+    use image::{imageops, GenericImage, GenericImageView, ImageBuffer, ImageError, Pixel, Rgba};
 
-    fn create_round_avatar<I: GenericImageView>(avatar: &I, target_size: u32) -> I {
+    fn create_round_avatar<I: GenericImageView<Pixel = Rgba<u8>>>(
+        avatar: &I,
+        target_size: u32,
+    ) -> impl GenericImage<Pixel = Rgba<u8>> {
         // Redimensiona el avatar al tamaño deseado antes de aplicar la máscara circular
         let avatar = resize(avatar, target_size, target_size, imageops::Lanczos3);
         let (width, height) = avatar.dimensions();
@@ -179,24 +179,22 @@ pub mod create_welcome {
 
         // Aplica la máscara al avatar redimensionado
         ImageBuffer::from_fn(width, height, |x, y| {
-            let mask_pixel = mask.get_pixel(x, y);
+            let mask_pixel = mask.get_pixel(x, y).0[3];
             let avatar_pixel = avatar.get_pixel(x, y);
-            if mask_pixel[3] > 0 {
+            if mask_pixel > 0 {
                 *avatar_pixel
             } else {
-                avatar_pixel.map_with_alpha(|f| f, |_| I::Pixel::Subpixel::DEFAULT_MIN_VALUE)
+                avatar_pixel.map_with_alpha(|f| f, |_| 0)
             }
         })
-        .into()
     }
 
-    pub fn combine_images<I: GenericImage>(
+    pub fn combine_images<I: GenericImage<Pixel = Rgba<u8>>>(
         background: &mut I,
         avatar: &I,
         x: u32,
         y: u32,
         target_size: u32,
-        output_path: &str,
     ) -> Result<(), ImageError> {
         let round_avatar = create_round_avatar(avatar, target_size);
 
@@ -207,10 +205,10 @@ pub mod create_welcome {
             let bx = adjusted_x + ax;
             let by = adjusted_y + ay;
             if bx < background.width() && by < background.height() {
-                let background_pixel = background.get_pixel(bx, by);
+                let alpha = background.get_pixel(bx, by).0[3];
 
-                if background_pixel[3] < 128 {
-                    background.put_pixel(bx, by, *pixel);
+                if alpha < 127 {
+                    background.put_pixel(bx, by, pixel);
                 }
             }
         }
