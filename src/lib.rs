@@ -155,7 +155,8 @@ pub mod generate_phrase {
 pub mod create_welcome {
     use image::imageops::{overlay, resize};
     use image::{
-        imageops, DynamicImage, GenericImage, GenericImageView, ImageBuffer, ImageError, Rgba,
+        imageops, DynamicImage, GenericImage, GenericImageView, ImageBuffer, ImageError, Pixel,
+        Rgba,
     };
 
     fn create_round_avatar<I: GenericImageView>(avatar: &I, target_size: u32) -> I {
@@ -254,4 +255,3 @@ pub mod create_welcome {
         Ok(())
     }
 }
-
