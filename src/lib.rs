@@ -184,7 +184,7 @@ pub mod create_welcome {
             if mask_pixel[3] > 0 {
                 *avatar_pixel
             } else {
-                I::Pixel::from_slice(&[0, 0, 0, 0])
+                avatar_pixel.map_with_alpha(|f| f, |_| 0.into())
             }
         })
         .into()
